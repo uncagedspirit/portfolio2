@@ -21,6 +21,7 @@ export const profileData = {
 export const experienceData = [
   {
     id: 1,
+    slug: "hsbc",
     company: "HSBC Technology India",
     role: "Software Engineer",
     site: "https://www.hsbc.co.in/",
@@ -32,6 +33,7 @@ export const experienceData = [
   },
   {
     id: 2,
+    slug: "cctech",
     company: "Centre for Computational Technologies",
     role: "Software Engineering Intern",
     site: "https://cctech.co.in/",
@@ -95,31 +97,44 @@ export const projects = [
   },
 ];
 
+// Education ordered: BE first → 12th → 10th → MS (planned, rightmost)
 export const educationData = [
   {
     instituteName: "NMIET, SPPU",
     level: "Bachelor of Engineering",
     specialization: "Computer Engineering",
-    duration: "2021 – 2025",
+    duration: "2021 - 2025",
     scoreLabel: "CGPA / 10",
     scoreValue: "8.66",
+    planned: false,
   },
   {
     instituteName: "SMV Junior College",
     level: "Higher Secondary (12th)",
     specialization: "Science",
-    duration: "2019 – 2021",
+    duration: "2019 - 2021",
     scoreLabel: "Percentage",
     scoreValue: "93%",
+    planned: false,
   },
   {
     instituteName: "CES Prerna High School",
     level: "Secondary School (10th)",
     specialization: "General",
-    duration: "2018 – 2019",
+    duration: "2018 - 2019",
     scoreLabel: "Percentage",
     scoreValue: "92%",
+    planned: false,
   },
+  // {
+  //   instituteName: "Master's Degree at where?",
+  //   level: "MS?",
+  //   specialization: "Computer Science / AI",
+  //   duration: "20?? - 20??",
+  //   scoreLabel: "Status",
+  //   scoreValue: "Planned",
+  //   planned: true,
+  // },
 ];
 
 export const socialData = [
@@ -129,7 +144,7 @@ export const socialData = [
     username: "@uncagedspirit_",
     link: "https://x.com/uncagedspirit_",
     metaLabel: "followers",
-    metaValue: "300+",
+    metaValue: "400+",
     bio: "Sharing the hustle, consistency and productivity hacks.",
   },
   {
@@ -138,7 +153,7 @@ export const socialData = [
     username: "saakshikobarne",
     link: "https://www.linkedin.com/in/saakshikobarne/",
     metaLabel: "connections",
-    metaValue: "500+",
+    metaValue: "3000+",
     bio: "AI · Full-Stack Engineering · JavaScript",
   },
   {
@@ -147,7 +162,7 @@ export const socialData = [
     username: "uncagedspirit",
     link: "https://github.com/uncagedspirit",
     metaLabel: "repositories",
-    metaValue: "73",
+    metaValue: "60",
     bio: "Building everyday, contributing to the developer community.",
   },
   {

@@ -4,21 +4,75 @@ import { profileData } from "../data";
 const SIDEBAR_WIDTH = 220;
 
 const navItems = [
-  { href: "#home", label: "Home" },
-  { href: "#experience", label: "Experience" },
-  { href: "#projects", label: "Projects" },
-  { href: "#education", label: "Education" },
-  { href: "#social", label: "Elsewhere" },
+  { id: "home", label: "Home" },
+  { id: "experience", label: "Experience" },
+  { id: "projects", label: "Projects" },
+  { id: "education", label: "Education" },
+  { id: "social", label: "Elsewhere" },
 ];
 
+// Smooth scroll without touching the URL
+function scrollTo(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+// ─── Brevo email sender ───────────────────────────────────────────────────────
+async function sendBrevoEmail({ name, email, message }) {
+  const apiKey = import.meta.env.VITE_BREVO_API_KEY;
+  if (!apiKey) {
+    console.warn("VITE_BREVO_API_KEY not set — skipping actual email send.");
+    return { ok: true };           // fall through to "sent" UI in dev
+  }
+
+  const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      "api-key": apiKey,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      sender: {
+        name: "Portfolio Contact Form",
+        email: profileData.email,        // must be a verified sender in Brevo
+      },
+      replyTo: { email, name },
+      to: [{ email: profileData.email, name: `${profileData.name} ${profileData.surname}` }],
+      subject: `Portfolio — new message from ${name}`,
+      htmlContent: `
+        <div style="font-family:monospace;font-size:13px;color:#222;line-height:1.7">
+          <h2 style="font-size:16px;margin-bottom:16px">New message from your portfolio</h2>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
+          <hr style="border:none;border-top:1px solid #ddd;margin:16px 0"/>
+          <p style="white-space:pre-wrap">${message.replace(/</g, "&lt;")}</p>
+        </div>
+      `,
+    }),
+  });
+
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Brevo error ${res.status}: ${body}`);
+  }
+  return { ok: true };
+}
+
+// ─── Contact Modal ────────────────────────────────────────────────────────────
 function ContactModal({ onClose }) {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState("idle"); // idle | sending | sent | error
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!form.name || !form.email || !form.message) return;
-    console.log("Work with me — form submitted:", form);
-    setSent(true);
+    setStatus("sending");
+    try {
+      await sendBrevoEmail(form);
+      setStatus("sent");
+    } catch (err) {
+      console.error(err);
+      setStatus("error");
+    }
   };
 
   return (
@@ -44,10 +98,10 @@ function ContactModal({ onClose }) {
           style={{ position: "absolute", top: 16, right: 20, background: "none", border: "none", color: "var(--muted)", fontSize: 18, cursor: "pointer" }}
         >×</button>
 
-        {sent ? (
+        {status === "sent" ? (
           <div style={{ textAlign: "center", padding: "32px 0" }}>
             <div className="serif" style={{ fontStyle: "italic", fontSize: 24, color: "var(--bright)", marginBottom: 12 }}>Noted.</div>
-            <div style={{ fontSize: 12, color: "var(--dim)" }}>I'll be in touch soon.</div>
+            <div style={{ fontSize: 12, color: "var(--dim)" }}>Message sent — I'll be in touch soon.</div>
           </div>
         ) : (
           <>
@@ -93,18 +147,25 @@ function ContactModal({ onClose }) {
               />
             </div>
 
+            {status === "error" && (
+              <div style={{ fontSize: 10, color: "#e07070", marginBottom: 12 }}>
+                Something went wrong. Please try emailing directly at {profileData.email}.
+              </div>
+            )}
+
             <button
               onClick={handleSubmit}
+              disabled={status === "sending"}
               style={{
                 width: "100%", background: "var(--accent)", color: "#000",
                 border: "none", padding: "12px 0", fontSize: 10,
                 textTransform: "uppercase", letterSpacing: "0.14em",
-                cursor: "pointer", fontFamily: "inherit", transition: "opacity 0.2s",
+                cursor: status === "sending" ? "not-allowed" : "pointer",
+                fontFamily: "inherit", transition: "opacity 0.2s",
+                opacity: status === "sending" ? 0.6 : 1,
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
-              onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
             >
-              Send message
+              {status === "sending" ? "Sending…" : "Send message"}
             </button>
           </>
         )}
@@ -113,6 +174,7 @@ function ContactModal({ onClose }) {
   );
 }
 
+// ─── Layout ───────────────────────────────────────────────────────────────────
 export default function Layout({ children }) {
   const [active, setActive] = useState("home");
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
@@ -124,11 +186,12 @@ export default function Layout({ children }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Track active section without touching the URL
   useEffect(() => {
     const sections = document.querySelectorAll("section[id]");
     const observer = new IntersectionObserver(
       (entries) => {
-        // pick the one with highest intersection ratio
+        // Find the entry with the highest intersection ratio that is intersecting
         let best = null;
         entries.forEach((e) => {
           if (e.isIntersecting) {
@@ -138,8 +201,8 @@ export default function Layout({ children }) {
         if (best) setActive(best.target.id);
       },
       {
-        threshold: [0, 0.1, 0.2, 0.3],
-        rootMargin: "0px 0px -40% 0px",
+        threshold: [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3],
+        rootMargin: "0px 0px -25% 0px",
       }
     );
     sections.forEach((s) => observer.observe(s));
@@ -172,25 +235,30 @@ export default function Layout({ children }) {
           </div>
 
           <nav style={{ flex: 1 }}>
-            {navItems.map(({ href, label }) => {
-              const id = href.slice(1);
+            {navItems.map(({ id, label }) => {
               const isActive = active === id;
               return (
-                <a key={id} href={href} style={{
-                  display: "flex", alignItems: "center", gap: 10,
-                  fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em",
-                  padding: "6px 0",
-                  color: isActive ? "var(--bright)" : "var(--dim)",
-                  textDecoration: "none", transition: "color 0.2s",
-                }}>
+                <button
+                  key={id}
+                  onClick={() => scrollTo(id)}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 10,
+                    fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em",
+                    padding: "6px 0", width: "100%",
+                    color: isActive ? "var(--bright)" : "var(--dim)",
+                    background: "none", border: "none", cursor: "pointer",
+                    fontFamily: "inherit", textAlign: "left",
+                    transition: "color 0.2s",
+                  }}
+                >
                   <span style={{ color: isActive ? "var(--accent)" : "var(--border)", fontSize: 10 }}>—</span>
                   {label}
-                </a>
+                </button>
               );
             })}
           </nav>
 
-          {/* Work with me button */}
+          {/* Work with me */}
           <button
             onClick={() => setModalOpen(true)}
             style={{
@@ -208,7 +276,7 @@ export default function Layout({ children }) {
             Work with me
           </button>
 
-          {/* Email mailto link */}
+          {/* Email */}
           <div style={{ fontSize: 9, letterSpacing: "0.05em", lineHeight: 1.6, paddingTop: 16, borderTop: "1px solid var(--border)", wordBreak: "break-all" }}>
             <a
               href={`mailto:${profileData.email}`}
@@ -241,18 +309,22 @@ export default function Layout({ children }) {
           borderTop: "1px solid var(--border)",
           background: "rgba(12,12,12,0.95)", backdropFilter: "blur(12px)",
         }}>
-          {navItems.map(({ href, label }) => {
-            const id = href.slice(1);
+          {navItems.map(({ id, label }) => {
             const isActive = active === id;
             return (
-              <a key={id} href={href} style={{
-                fontSize: 9, textTransform: "uppercase", letterSpacing: "0.08em",
-                padding: "6px 8px",
-                color: isActive ? "var(--bright)" : "var(--dim)",
-                textDecoration: "none", transition: "color 0.2s",
-              }}>
+              <button
+                key={id}
+                onClick={() => scrollTo(id)}
+                style={{
+                  fontSize: 9, textTransform: "uppercase", letterSpacing: "0.08em",
+                  padding: "6px 8px",
+                  color: isActive ? "var(--bright)" : "var(--dim)",
+                  background: "none", border: "none", cursor: "pointer",
+                  fontFamily: "inherit", transition: "color 0.2s",
+                }}
+              >
                 {label}
-              </a>
+              </button>
             );
           })}
         </nav>

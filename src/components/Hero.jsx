@@ -1,6 +1,7 @@
 import { useReveal } from "../hooks/useReveal";
 import { useTyping } from "../hooks/useTyping";
 import { profileData } from "../data";
+import GithubGraph from "./GithubGraph";
 
 export default function Hero() {
   const ref = useReveal();
@@ -56,8 +57,9 @@ export default function Hero() {
         {profileData.about}
       </p>
 
+      {/* Skills only — no languages */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-        {[...profileData.skills, ...profileData.languages].map((item) => (
+        {profileData.skills.map((item) => (
           <span
             key={item}
             style={{
@@ -83,6 +85,9 @@ export default function Hero() {
           </span>
         ))}
       </div>
+
+      {/* GitHub contribution graph */}
+      <GithubGraph username={profileData.handle} />
     </section>
   );
 }

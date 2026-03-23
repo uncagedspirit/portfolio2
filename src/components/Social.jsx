@@ -2,7 +2,7 @@ import { useReveal } from "../hooks/useReveal";
 import { socialData, testimonials } from "../data";
 import SectionLabel from "./SectionLabel";
 
-function SocialCard({ item }) {
+function SocialCard({ item, isLast }) {
   return (
     <a
       href={item.link}
@@ -10,36 +10,66 @@ function SocialCard({ item }) {
       rel="noreferrer"
       style={{
         display: "block",
-        padding: 24,
+        padding: "20px 18px",
         position: "relative",
-        borderRight: "1px solid var(--border)",
-        borderBottom: "1px solid var(--border)",
+        borderRight: isLast ? "none" : "1px solid var(--border)",
         color: "inherit",
         textDecoration: "none",
         background: "transparent",
         transition: "background 0.2s",
+        minWidth: 0,
       }}
       onMouseEnter={(e) => (e.currentTarget.style.background = "var(--surface)")}
       onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
     >
-      <span style={{ position: "absolute", top: 24, right: 24, fontSize: 14, color: "var(--border)" }}>↗</span>
+      <span style={{ position: "absolute", top: 16, right: 14, fontSize: 12, color: "var(--border)" }}>↗</span>
 
-      {/* Platform name LARGE (was username) */}
-      <div className="serif" style={{ fontStyle: "italic", fontSize: 18, marginBottom: 4, color: "var(--bright)" }}>
+      {/* Platform name */}
+      <div className="serif" style={{
+        fontStyle: "italic",
+        fontSize: 15,
+        marginBottom: 4,
+        color: "var(--bright)",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        paddingRight: 20,
+      }}>
         {item.platform}
       </div>
 
-      {/* Username SMALL (was platform) */}
-      <div style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: 12, color: "var(--muted)" }}>
+      {/* Username */}
+      <div style={{
+        fontSize: 8,
+        textTransform: "uppercase",
+        letterSpacing: "0.12em",
+        marginBottom: 10,
+        color: "var(--muted)",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+      }}>
         {item.username}
       </div>
 
-      <div style={{ fontSize: 11, lineHeight: 1.7, marginBottom: 16, color: "var(--dim)" }}>
+      {/* Bio */}
+      <div style={{
+        fontSize: 10,
+        lineHeight: 1.55,
+        marginBottom: 12,
+        color: "var(--dim)",
+        display: "-webkit-box",
+        WebkitLineClamp: 2,
+        WebkitBoxOrient: "vertical",
+        overflow: "hidden",
+      }}>
         {item.bio}
       </div>
-      <div style={{ fontSize: 10, color: "var(--accent)" }}>
+
+      {/* Meta */}
+      <div style={{ fontSize: 11, color: "var(--accent)" }}>
         {item.metaValue}{" "}
-        <span style={{ fontSize: 9, letterSpacing: "0.06em", color: "var(--muted)" }}>
+        <span style={{ fontSize: 8, letterSpacing: "0.06em", color: "var(--muted)" }}>
           {item.metaLabel}
         </span>
       </div>
@@ -59,22 +89,32 @@ export default function Social() {
     >
       <SectionLabel>005 / Elsewhere</SectionLabel>
 
+      {/* Single-row grid — 5 equal columns */}
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+          gridTemplateColumns: "repeat(5, 1fr)",
           border: "1px solid var(--border)",
           gap: 0,
           marginBottom: 64,
         }}
       >
-        {socialData.map((item) => (
-          <SocialCard key={item.key} item={item} />
+        {socialData.map((item, i) => (
+          <SocialCard key={item.key} item={item} isLast={i === socialData.length - 1} />
         ))}
       </div>
 
       {/* Testimonials */}
-      <div style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.18em", display: "flex", alignItems: "center", gap: 12, marginBottom: 32, color: "var(--muted)" }}>
+      <div style={{
+        fontSize: 9,
+        textTransform: "uppercase",
+        letterSpacing: "0.18em",
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        marginBottom: 32,
+        color: "var(--muted)",
+      }}>
         Kind words
         <span style={{ flex: 1, height: 1, background: "var(--border)" }} />
       </div>

@@ -8,6 +8,7 @@ import Social from "./components/Social";
 import Footer from "./components/Footer";
 import ProjectDetail from "./pages/ProjectDetail";
 import AllProjects from "./pages/AllProjects";
+import ExperienceDetail from "./pages/ExperienceDetail";
 
 function Home() {
   return (
@@ -38,12 +39,21 @@ function AllProjectsPage() {
   );
 }
 
+function ExperienceDetailPage() {
+  return (
+    <Layout>
+      <ExperienceDetail />
+    </Layout>
+  );
+}
+
 export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/projects" element={<AllProjectsPage />} />
       <Route path="/projects/:slug" element={<ProjectDetailPage />} />
+      <Route path="/experience/:slug" element={<ExperienceDetailPage />} />
     </Routes>
   );
 }

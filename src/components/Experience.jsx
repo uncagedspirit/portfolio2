@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useReveal } from "../hooks/useReveal";
 import { experienceData } from "../data";
 import SectionLabel from "./SectionLabel";
@@ -5,6 +6,7 @@ import TechTag from "./TechTag";
 
 export default function Experience() {
   const ref = useReveal();
+  const navigate = useNavigate();
 
   return (
     <section
@@ -79,6 +81,37 @@ export default function Experience() {
                   ))}
                 </div>
               )}
+
+              {/* Want to know more? */}
+              <button
+                onClick={() => navigate(`/experience/${exp.slug}`)}
+                style={{
+                  marginTop: 20,
+                  background: "transparent",
+                  border: "1px solid var(--border)",
+                  color: "var(--dim)",
+                  fontSize: 9,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.12em",
+                  padding: "7px 16px",
+                  cursor: "pointer",
+                  fontFamily: "inherit",
+                  transition: "border-color 0.2s, color 0.2s",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "var(--accent)";
+                  e.currentTarget.style.color = "var(--accent)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "var(--border)";
+                  e.currentTarget.style.color = "var(--dim)";
+                }}
+              >
+                Want to know more? ↗
+              </button>
             </div>
 
             <div style={{ fontSize: 10, textAlign: "right", whiteSpace: "nowrap", paddingTop: 4, letterSpacing: "0.04em", color: "var(--muted)" }}>
