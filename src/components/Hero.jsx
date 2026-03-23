@@ -10,16 +10,26 @@ export default function Hero() {
     <section
       id="home"
       ref={ref}
-      className="reveal flex flex-col justify-center min-h-screen px-8 md:px-16 py-24"
-      style={{ borderBottom: "1px solid var(--border)" }}
+      className="reveal"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        minHeight: "100vh",
+        padding: "96px 64px",
+        borderBottom: "1px solid var(--border)",
+      }}
     >
-      <div className="text-[10px] uppercase tracking-[0.15em] mb-6" style={{ color: "var(--muted)" }}>
+      <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.15em", marginBottom: 24, color: "var(--muted)" }}>
         001 / Introduction
       </div>
 
       <h1
-        className="serif italic leading-[1.1] mb-2"
+        className="serif"
         style={{
+          fontStyle: "italic",
+          lineHeight: 1.1,
+          marginBottom: 8,
           fontSize: "clamp(42px, 5vw, 72px)",
           color: "var(--bright)",
           fontWeight: 400,
@@ -29,25 +39,36 @@ export default function Hero() {
         <span style={{ color: "var(--accent)" }}>Builder.</span>
       </h1>
 
-      <div className="text-[11px] mb-12 h-[18px] overflow-hidden" style={{ color: "var(--dim)" }}>
+      <div style={{ fontSize: 11, marginBottom: 48, height: 20, overflow: "hidden", color: "var(--dim)" }}>
         <span className="typing-cursor">{typed}</span>
       </div>
 
       <p
-        className="serif text-base leading-[1.8] mb-12 max-w-[480px]"
-        style={{ color: "var(--text)" }}
+        className="serif"
+        style={{
+          fontSize: 16,
+          lineHeight: 1.8,
+          marginBottom: 48,
+          maxWidth: 480,
+          color: "var(--text)",
+        }}
       >
         {profileData.about}
       </p>
 
-      <div className="flex flex-wrap gap-2">
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
         {[...profileData.skills, ...profileData.languages].map((item) => (
           <span
             key={item}
-            className="text-[9px] uppercase tracking-[0.1em] px-2.5 py-1 transition-all duration-200 cursor-default"
             style={{
+              fontSize: 9,
+              textTransform: "uppercase",
+              letterSpacing: "0.1em",
+              padding: "4px 10px",
               color: "var(--dim)",
               border: "1px solid var(--border)",
+              cursor: "default",
+              transition: "color 0.2s, border-color 0.2s",
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = "var(--accent)";

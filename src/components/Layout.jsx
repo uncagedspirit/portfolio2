@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { profileData } from "../data";
 
+const SIDEBAR_WIDTH = 220;
+
 const navItems = [
   { href: "#home", label: "Home" },
   { href: "#experience", label: "Experience" },
@@ -9,9 +11,9 @@ const navItems = [
   { href: "#social", label: "Elsewhere" },
 ];
 
-export default function Sidebar() {
+export default function Layout({ children }) {
   const [active, setActive] = useState("home");
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -34,25 +36,30 @@ export default function Sidebar() {
   }, []);
 
   return (
-    <>
-      {/* Desktop sidebar */}
+    <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg)" }}>
+
+      {/* ── Desktop Sidebar ── fixed, full height, exactly SIDEBAR_WIDTH wide */}
       {!isMobile && (
         <aside
           style={{
             position: "fixed",
             top: 0,
             left: 0,
+            width: SIDEBAR_WIDTH,
             height: "100vh",
-            width: 220,
             display: "flex",
             flexDirection: "column",
             padding: "40px 28px",
             zIndex: 50,
             borderRight: "1px solid var(--border)",
             background: "var(--bg)",
+            flexShrink: 0,
           }}
         >
-          <div className="serif" style={{ fontStyle: "italic", fontSize: 20, lineHeight: 1.2, marginBottom: 4, color: "var(--bright)" }}>
+          <div
+            className="serif"
+            style={{ fontStyle: "italic", fontSize: 20, lineHeight: 1.2, marginBottom: 4, color: "var(--bright)" }}
+          >
             {profileData.name}<br />{profileData.surname}
           </div>
           <div style={{ fontSize: 10, letterSpacing: "0.1em", marginBottom: 36, color: "var(--dim)" }}>
@@ -118,7 +125,19 @@ export default function Sidebar() {
         </aside>
       )}
 
-      {/* Mobile bottom nav */}
+      {/* ── Main content ── offset by exactly SIDEBAR_WIDTH on desktop, full width on mobile */}
+      <main
+        style={{
+          marginLeft: isMobile ? 0 : SIDEBAR_WIDTH,
+          width: isMobile ? "100%" : `calc(100% - ${SIDEBAR_WIDTH}px)`,
+          minWidth: 0,
+          paddingBottom: isMobile ? 64 : 0,
+        }}
+      >
+        {children}
+      </main>
+
+      {/* ── Mobile bottom nav ── */}
       {isMobile && (
         <nav
           style={{
@@ -159,6 +178,6 @@ export default function Sidebar() {
           })}
         </nav>
       )}
-    </>
+    </div>
   );
 }

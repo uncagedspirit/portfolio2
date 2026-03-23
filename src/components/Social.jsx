@@ -8,34 +8,44 @@ function SocialCard({ item }) {
       href={item.link}
       target="_blank"
       rel="noreferrer"
-      className="block p-6 relative transition-colors duration-200"
       style={{
+        display: "block",
+        padding: 24,
+        position: "relative",
         borderRight: "1px solid var(--border)",
         borderBottom: "1px solid var(--border)",
         color: "inherit",
         textDecoration: "none",
+        background: "transparent",
+        transition: "background 0.2s",
       }}
       onMouseEnter={(e) => (e.currentTarget.style.background = "var(--surface)")}
       onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
     >
       <span
-        className="absolute top-6 right-6 text-sm transition-colors duration-200"
-        style={{ color: "var(--border)" }}
+        style={{
+          position: "absolute",
+          top: 24,
+          right: 24,
+          fontSize: 14,
+          color: "var(--border)",
+          transition: "color 0.2s",
+        }}
       >
         ↗
       </span>
-      <div className="text-[9px] uppercase tracking-[0.14em] mb-2.5" style={{ color: "var(--muted)" }}>
+      <div style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: 10, color: "var(--muted)" }}>
         {item.platform}
       </div>
-      <div className="serif italic text-lg mb-2" style={{ color: "var(--bright)" }}>
+      <div className="serif" style={{ fontStyle: "italic", fontSize: 18, marginBottom: 8, color: "var(--bright)" }}>
         {item.username}
       </div>
-      <div className="text-[11px] leading-relaxed mb-4" style={{ color: "var(--dim)" }}>
+      <div style={{ fontSize: 11, lineHeight: 1.7, marginBottom: 16, color: "var(--dim)" }}>
         {item.bio}
       </div>
-      <div className="text-[10px]" style={{ color: "var(--accent)" }}>
+      <div style={{ fontSize: 10, color: "var(--accent)" }}>
         {item.metaValue}{" "}
-        <span className="text-[9px] tracking-[0.06em]" style={{ color: "var(--muted)" }}>
+        <span style={{ fontSize: 9, letterSpacing: "0.06em", color: "var(--muted)" }}>
           {item.metaLabel}
         </span>
       </div>
@@ -50,14 +60,17 @@ export default function Social() {
     <section
       id="social"
       ref={ref}
-      className="reveal px-8 md:px-16 py-20"
-      style={{ borderBottom: "1px solid var(--border)" }}
+      className="reveal"
+      style={{
+        padding: "80px 64px",
+        borderBottom: "1px solid var(--border)",
+      }}
     >
       <SectionLabel>005 / Elsewhere</SectionLabel>
 
       <div
-        className="grid"
         style={{
+          display: "grid",
           gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
           border: "1px solid var(--border)",
           gap: 0,
@@ -71,37 +84,48 @@ export default function Social() {
 
       {/* Testimonials */}
       <div
-        className="text-[9px] uppercase tracking-[0.18em] flex items-center gap-3 mb-8"
-        style={{ color: "var(--muted)" }}
+        style={{
+          fontSize: 9,
+          textTransform: "uppercase",
+          letterSpacing: "0.18em",
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+          marginBottom: 32,
+          color: "var(--muted)",
+        }}
       >
         Kind words
-        <span className="flex-1 h-px" style={{ background: "var(--border)" }} />
+        <span style={{ flex: 1, height: 1, background: "var(--border)" }} />
       </div>
 
       <div>
         {testimonials.map((t, i) => (
           <div
             key={t.name}
-            className="grid items-start gap-7 py-7"
             style={{
+              display: "grid",
               gridTemplateColumns: "auto 1fr",
+              alignItems: "start",
+              gap: 28,
+              padding: "28px 0",
               borderBottom: i < testimonials.length - 1 ? "1px solid var(--border)" : "none",
             }}
           >
             <div
-              className="serif italic leading-none"
-              style={{ fontSize: 48, color: "var(--border)", marginTop: -8 }}
+              className="serif"
+              style={{ fontStyle: "italic", fontSize: 48, lineHeight: 1, color: "var(--border)", marginTop: -8 }}
             >
               "
             </div>
             <div>
-              <div className="serif italic text-lg mb-3.5 leading-relaxed" style={{ color: "var(--text)" }}>
+              <div className="serif" style={{ fontStyle: "italic", fontSize: 18, marginBottom: 14, lineHeight: 1.6, color: "var(--text)" }}>
                 {t.text}
               </div>
-              <div className="text-[10px] uppercase tracking-[0.08em]" style={{ color: "var(--muted)" }}>
+              <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--muted)" }}>
                 {t.name}
               </div>
-              <div className="text-[10px] mt-0.5" style={{ color: "var(--dim)" }}>
+              <div style={{ fontSize: 10, marginTop: 2, color: "var(--dim)" }}>
                 {t.role}
               </div>
             </div>

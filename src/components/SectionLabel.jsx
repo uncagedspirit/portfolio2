@@ -1,11 +1,19 @@
 export default function SectionLabel({ children }) {
   return (
     <div
-      className="flex items-center gap-3 text-[9px] uppercase tracking-[0.18em] mb-12"
-      style={{ color: "var(--muted)" }}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        fontSize: 9,
+        textTransform: "uppercase",
+        letterSpacing: "0.18em",
+        marginBottom: 48,
+        color: "var(--muted)",
+      }}
     >
       {children}
-      <span className="flex-1 h-px" style={{ background: "var(--border)" }} />
+      <span style={{ flex: 1, height: 1, background: "var(--border)" }} />
     </div>
   );
 }

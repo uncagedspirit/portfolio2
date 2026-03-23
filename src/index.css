@@ -41,16 +41,38 @@ body::before {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-@keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-@keyframes blink-cursor { 50% { border-color: transparent; } }
-
-.status-dot { animation: pulse-dot 2.4s ease-in-out infinite; }
-.typing-cursor {
-  border-right: 1px solid var(--accent);
-  animation: blink-cursor 1s step-end infinite;
-  padding-right: 2px;
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
 }
 
-.reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.55s ease, transform 0.55s ease; }
-.reveal.visible { opacity: 1; transform: none; }
-.serif { font-family: 'EB Garamond', Georgia, serif; }
+@keyframes blink-cursor {
+  50% { border-color: transparent; }
+}
+
+@layer components {
+  .serif {
+    font-family: 'EB Garamond', Georgia, serif;
+  }
+
+  .status-dot {
+    animation: pulse-dot 2.4s ease-in-out infinite;
+  }
+
+  .typing-cursor {
+    border-right: 1px solid var(--accent);
+    animation: blink-cursor 1s step-end infinite;
+    padding-right: 2px;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+}

@@ -9,8 +9,11 @@ export default function Education() {
     <section
       id="education"
       ref={ref}
-      className="reveal px-8 md:px-16 py-20"
-      style={{ borderBottom: "1px solid var(--border)" }}
+      className="reveal"
+      style={{
+        padding: "80px 64px",
+        borderBottom: "1px solid var(--border)",
+      }}
     >
       <SectionLabel>004 / Education</SectionLabel>
 
@@ -18,29 +21,32 @@ export default function Education() {
         {educationData.map((edu, i) => (
           <div
             key={edu.instituteName}
-            className="grid items-start gap-8 py-7"
             style={{
+              display: "grid",
               gridTemplateColumns: "1fr auto",
+              alignItems: "start",
+              gap: 32,
+              padding: "28px 0",
               borderBottom: i < educationData.length - 1 ? "1px solid var(--border)" : "none",
             }}
           >
             <div>
-              <div className="serif italic text-lg mb-1" style={{ color: "var(--bright)" }}>
+              <div className="serif" style={{ fontStyle: "italic", fontSize: 18, marginBottom: 4, color: "var(--bright)" }}>
                 {edu.instituteName}
               </div>
-              <div className="text-[10px] tracking-[0.06em] mb-0.5" style={{ color: "var(--dim)" }}>
+              <div style={{ fontSize: 10, letterSpacing: "0.06em", marginBottom: 2, color: "var(--dim)" }}>
                 {edu.level}
               </div>
-              <div className="text-[10px]" style={{ color: "var(--muted)" }}>
+              <div style={{ fontSize: 10, color: "var(--muted)" }}>
                 {edu.specialization} · {edu.duration}
               </div>
             </div>
 
-            <div className="text-right">
-              <span className="serif italic block" style={{ fontSize: 22, color: "var(--accent)" }}>
+            <div style={{ textAlign: "right" }}>
+              <span className="serif" style={{ fontStyle: "italic", display: "block", fontSize: 22, color: "var(--accent)" }}>
                 {edu.scoreValue}
               </span>
-              <span className="text-[9px] uppercase tracking-[0.1em]" style={{ color: "var(--muted)" }}>
+              <span style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--muted)" }}>
                 {edu.scoreLabel}
               </span>
             </div>

@@ -7,12 +7,21 @@ export default function Footer() {
   return (
     <footer
       ref={ref}
-      className="reveal flex flex-col md:flex-row justify-between items-center gap-3 px-8 md:px-16 py-12"
+      className="reveal"
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: 12,
+        padding: "48px 64px",
+      }}
     >
-      <div className="serif italic text-[15px]" style={{ color: "var(--dim)" }}>
+      <div className="serif" style={{ fontStyle: "italic", fontSize: 15, color: "var(--dim)" }}>
         Saakshi Kobarne, {year}
       </div>
-      <div className="text-[9px] uppercase tracking-[0.1em]" style={{ color: "var(--muted)" }}>
+      <div style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--muted)" }}>
         Made with craft · Pune, India
       </div>
     </footer>

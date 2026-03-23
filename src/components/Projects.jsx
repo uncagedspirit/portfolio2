@@ -6,35 +6,37 @@ import TechTag from "./TechTag";
 function ProjectCard({ project }) {
   return (
     <div
-      className="p-6 transition-colors duration-200 cursor-default"
       style={{
+        padding: 24,
         borderRight: "1px solid var(--border)",
         borderBottom: "1px solid var(--border)",
+        background: "transparent",
+        cursor: "default",
+        transition: "background 0.2s",
       }}
       onMouseEnter={(e) => (e.currentTarget.style.background = "var(--surface)")}
       onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
     >
-      <div className="text-[9px] tracking-[0.1em] mb-4" style={{ color: "var(--border)" }}>
+      <div style={{ fontSize: 9, letterSpacing: "0.1em", marginBottom: 16, color: "var(--border)" }}>
         {project.num}
       </div>
-      <div className="serif italic text-xl leading-tight mb-2" style={{ color: "var(--bright)" }}>
+      <div className="serif" style={{ fontStyle: "italic", fontSize: 20, lineHeight: 1.25, marginBottom: 8, color: "var(--bright)" }}>
         {project.title}
       </div>
-      <div className="text-[11px] leading-relaxed mb-5" style={{ color: "var(--dim)" }}>
+      <div style={{ fontSize: 11, lineHeight: 1.7, marginBottom: 20, color: "var(--dim)" }}>
         {project.description}
       </div>
-      <div className="flex flex-wrap gap-1.5 mb-5">
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 20 }}>
         {project.techStack.map((t) => (
           <TechTag key={t}>{t}</TechTag>
         ))}
       </div>
-      <div className="flex gap-4">
+      <div style={{ display: "flex", gap: 16 }}>
         <a
           href={project.githubLink}
           target="_blank"
           rel="noreferrer"
-          className="text-[9px] uppercase tracking-[0.12em] flex items-center gap-1 transition-colors duration-200"
-          style={{ color: "var(--muted)", textDecoration: "none" }}
+          style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.12em", display: "flex", alignItems: "center", gap: 4, color: "var(--muted)", textDecoration: "none", transition: "color 0.2s" }}
           onMouseEnter={(e) => (e.currentTarget.style.color = "var(--accent)")}
           onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted)")}
         >
@@ -44,8 +46,7 @@ function ProjectCard({ project }) {
           href={project.liveLink}
           target="_blank"
           rel="noreferrer"
-          className="text-[9px] uppercase tracking-[0.12em] flex items-center gap-1 transition-colors duration-200"
-          style={{ color: "var(--muted)", textDecoration: "none" }}
+          style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.12em", display: "flex", alignItems: "center", gap: 4, color: "var(--muted)", textDecoration: "none", transition: "color 0.2s" }}
           onMouseEnter={(e) => (e.currentTarget.style.color = "var(--accent)")}
           onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted)")}
         >
@@ -63,14 +64,17 @@ export default function Projects() {
     <section
       id="projects"
       ref={ref}
-      className="reveal px-8 md:px-16 py-20"
-      style={{ borderBottom: "1px solid var(--border)" }}
+      className="reveal"
+      style={{
+        padding: "80px 64px",
+        borderBottom: "1px solid var(--border)",
+      }}
     >
       <SectionLabel>003 / Projects</SectionLabel>
 
       <div
-        className="grid"
         style={{
+          display: "grid",
           gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
           border: "1px solid var(--border)",
           gap: 0,

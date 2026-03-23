@@ -10,8 +10,11 @@ export default function Experience() {
     <section
       id="experience"
       ref={ref}
-      className="reveal px-8 md:px-16 py-20"
-      style={{ borderBottom: "1px solid var(--border)" }}
+      className="reveal"
+      style={{
+        padding: "80px 64px",
+        borderBottom: "1px solid var(--border)",
+      }}
     >
       <SectionLabel>002 / Experience</SectionLabel>
 
@@ -19,51 +22,58 @@ export default function Experience() {
         {experienceData.map((exp, i) => (
           <div
             key={exp.id}
-            className="grid gap-8 py-8"
             style={{
+              display: "grid",
               gridTemplateColumns: "1fr auto",
+              gap: 32,
+              alignItems: "start",
+              padding: "32px 0",
               borderBottom: i < experienceData.length - 1 ? "1px solid var(--border)" : "none",
             }}
           >
             <div>
-              <div className="serif italic text-lg mb-1" style={{ color: "var(--bright)" }}>
+              <div className="serif" style={{ fontStyle: "italic", fontSize: 18, marginBottom: 4, color: "var(--bright)" }}>
                 {exp.company}
               </div>
-              <div
-                className="text-[10px] uppercase tracking-[0.1em] mb-4"
-                style={{ color: "var(--accent)" }}
-              >
+              <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 16, color: "var(--accent)" }}>
                 {exp.role}
               </div>
-              <div className="flex flex-wrap gap-4 text-[10px] mb-4" style={{ color: "var(--muted)" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 16, fontSize: 10, marginBottom: 16, color: "var(--muted)" }}>
                 <span>↳ {exp.workType}</span>
                 <span>↳ {exp.location}</span>
                 <a
                   href={exp.site}
                   target="_blank"
                   rel="noreferrer"
-                  className="transition-colors duration-200 hover:text-[color:var(--accent)]"
-                  style={{ color: "var(--muted)", textDecoration: "none" }}
+                  style={{ color: "var(--muted)", textDecoration: "none", transition: "color 0.2s" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--accent)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted)")}
                 >
                   {exp.site.replace("https://", "").replace(/\/$/, "")} ↗
                 </a>
               </div>
 
-              <ul className="space-y-1">
+              <ul style={{ listStyle: "none", padding: 0 }}>
                 {exp.points.map((pt, j) => (
                   <li
                     key={j}
-                    className="text-[12px] leading-relaxed pl-4 relative"
-                    style={{ color: "var(--text)" }}
+                    style={{
+                      fontSize: 12,
+                      lineHeight: 1.7,
+                      paddingLeft: 16,
+                      position: "relative",
+                      marginBottom: 4,
+                      color: "var(--text)",
+                    }}
                   >
-                    <span className="absolute left-0" style={{ color: "var(--muted)" }}>·</span>
+                    <span style={{ position: "absolute", left: 0, color: "var(--muted)" }}>·</span>
                     {pt}
                   </li>
                 ))}
               </ul>
 
               {exp.techStack.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 mt-4">
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 16 }}>
                   {exp.techStack.map((t) => (
                     <TechTag key={t}>{t}</TechTag>
                   ))}
@@ -71,14 +81,10 @@ export default function Experience() {
               )}
             </div>
 
-            <div
-              className="text-[10px] text-right whitespace-nowrap pt-1 tracking-[0.04em]"
-              style={{ color: "var(--muted)" }}
-            >
+            <div style={{ fontSize: 10, textAlign: "right", whiteSpace: "nowrap", paddingTop: 4, letterSpacing: "0.04em", color: "var(--muted)" }}>
               {exp.duration.split("—").map((part, idx) => (
-                <span key={idx}>
-                  {idx > 0 && <><br />— </>}
-                  {part.trim()}
+                <span key={idx} style={{ display: "block" }}>
+                  {idx > 0 ? `— ${part.trim()}` : part.trim()}
                 </span>
               ))}
             </div>
