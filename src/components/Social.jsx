@@ -22,24 +22,18 @@ function SocialCard({ item }) {
       onMouseEnter={(e) => (e.currentTarget.style.background = "var(--surface)")}
       onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
     >
-      <span
-        style={{
-          position: "absolute",
-          top: 24,
-          right: 24,
-          fontSize: 14,
-          color: "var(--border)",
-          transition: "color 0.2s",
-        }}
-      >
-        ↗
-      </span>
-      <div style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: 10, color: "var(--muted)" }}>
+      <span style={{ position: "absolute", top: 24, right: 24, fontSize: 14, color: "var(--border)" }}>↗</span>
+
+      {/* Platform name LARGE (was username) */}
+      <div className="serif" style={{ fontStyle: "italic", fontSize: 18, marginBottom: 4, color: "var(--bright)" }}>
         {item.platform}
       </div>
-      <div className="serif" style={{ fontStyle: "italic", fontSize: 18, marginBottom: 8, color: "var(--bright)" }}>
+
+      {/* Username SMALL (was platform) */}
+      <div style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: 12, color: "var(--muted)" }}>
         {item.username}
       </div>
+
       <div style={{ fontSize: 11, lineHeight: 1.7, marginBottom: 16, color: "var(--dim)" }}>
         {item.bio}
       </div>
@@ -61,10 +55,7 @@ export default function Social() {
       id="social"
       ref={ref}
       className="reveal"
-      style={{
-        padding: "80px 64px",
-        borderBottom: "1px solid var(--border)",
-      }}
+      style={{ padding: "80px 64px", borderBottom: "1px solid var(--border)" }}
     >
       <SectionLabel>005 / Elsewhere</SectionLabel>
 
@@ -83,18 +74,7 @@ export default function Social() {
       </div>
 
       {/* Testimonials */}
-      <div
-        style={{
-          fontSize: 9,
-          textTransform: "uppercase",
-          letterSpacing: "0.18em",
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          marginBottom: 32,
-          color: "var(--muted)",
-        }}
-      >
+      <div style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.18em", display: "flex", alignItems: "center", gap: 12, marginBottom: 32, color: "var(--muted)" }}>
         Kind words
         <span style={{ flex: 1, height: 1, background: "var(--border)" }} />
       </div>
@@ -112,22 +92,11 @@ export default function Social() {
               borderBottom: i < testimonials.length - 1 ? "1px solid var(--border)" : "none",
             }}
           >
-            <div
-              className="serif"
-              style={{ fontStyle: "italic", fontSize: 48, lineHeight: 1, color: "var(--border)", marginTop: -8 }}
-            >
-              "
-            </div>
+            <div className="serif" style={{ fontStyle: "italic", fontSize: 48, lineHeight: 1, color: "var(--border)", marginTop: -8 }}>"</div>
             <div>
-              <div className="serif" style={{ fontStyle: "italic", fontSize: 18, marginBottom: 14, lineHeight: 1.6, color: "var(--text)" }}>
-                {t.text}
-              </div>
-              <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--muted)" }}>
-                {t.name}
-              </div>
-              <div style={{ fontSize: 10, marginTop: 2, color: "var(--dim)" }}>
-                {t.role}
-              </div>
+              <div className="serif" style={{ fontStyle: "italic", fontSize: 18, marginBottom: 14, lineHeight: 1.6, color: "var(--text)" }}>{t.text}</div>
+              <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--muted)" }}>{t.name}</div>
+              <div style={{ fontSize: 10, marginTop: 2, color: "var(--dim)" }}>{t.role}</div>
             </div>
           </div>
         ))}
