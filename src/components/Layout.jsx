@@ -180,7 +180,7 @@ export default function Layout({ children }) {
   const [active, setActive] = useState("home");
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
   const [modalOpen, setModalOpen] = useState(false);
-  const debounceTimerRef = useRef(null);
+  const rafRef = useRef(null);
   const previousActiveRef = useRef("home");
 
   useEffect(() => {
@@ -189,12 +189,11 @@ export default function Layout({ children }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Smooth scroll detection using a simpler, more stable approach
+  // High-frequency scroll detection using requestAnimationFrame
   useEffect(() => {
     const sections = Array.from(document.querySelectorAll("section[id]"));
     if (sections.length === 0) return;
 
-    // Function to determine which section is in view
     const updateActiveSection = () => {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
@@ -203,7 +202,9 @@ export default function Layout({ children }) {
       let closestSection = sections[0];
       let closestDistance = Infinity;
 
-      sections.forEach((section) => {
+      // Find which section center is closest to viewport center
+      for (let i = 0; i < sections.length; i++) {
+        const section = sections[i];
         const sectionTop = section.offsetTop;
         const sectionHeight = section.offsetHeight;
         const sectionCenter = sectionTop + sectionHeight / 2;
@@ -213,37 +214,35 @@ export default function Layout({ children }) {
           closestDistance = distance;
           closestSection = section;
         }
-      });
+      }
 
       const newActive = closestSection.id;
-      
-      // Only update if it actually changed
+
+      // Only update state when section actually changes
       if (newActive !== previousActiveRef.current) {
         previousActiveRef.current = newActive;
         setActive(newActive);
       }
     };
 
-    // Debounced scroll listener - update max once per 100ms during scroll
-    const handleScroll = () => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
+    // Use requestAnimationFrame for smooth 60fps detection during scroll
+    const scheduleUpdate = () => {
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
       }
-
-      debounceTimerRef.current = setTimeout(() => {
-        updateActiveSection();
-      }, 100);
+      rafRef.current = requestAnimationFrame(updateActiveSection);
     };
 
-    // Also update on initial load
+    // Update immediately on scroll
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+
+    // Initial update
     updateActiveSection();
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
+      window.removeEventListener("scroll", scheduleUpdate);
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
       }
     };
   }, []);
@@ -287,12 +286,12 @@ export default function Layout({ children }) {
                     color: isActive ? "var(--bright)" : "var(--dim)",
                     background: "none", border: "none", cursor: "pointer",
                     fontFamily: "inherit", textAlign: "left",
-                    transition: "color 0.3s ease",
+                    transition: "color 0.2s ease",
                   }}
                   onMouseEnter={(e) => !isActive && (e.currentTarget.style.color = "var(--bright)")}
                   onMouseLeave={(e) => !isActive && (e.currentTarget.style.color = "var(--dim)")}
                 >
-                  <span style={{ color: isActive ? "var(--accent)" : "var(--border)", fontSize: 10, transition: "color 0.3s ease" }}>—</span>
+                  <span style={{ color: isActive ? "var(--accent)" : "var(--border)", fontSize: 10, transition: "color 0.2s ease" }}>—</span>
                   {label}
                 </button>
               );
@@ -361,7 +360,7 @@ export default function Layout({ children }) {
                   padding: "6px 8px",
                   color: isActive ? "var(--bright)" : "var(--dim)",
                   background: "none", border: "none", cursor: "pointer",
-                  fontFamily: "inherit", transition: "color 0.3s ease",
+                  fontFamily: "inherit", transition: "color 0.2s ease",
                 }}
                 onMouseEnter={(e) => !isActive && (e.currentTarget.style.color = "var(--bright)")}
                 onMouseLeave={(e) => !isActive && (e.currentTarget.style.color = "var(--dim)")}
