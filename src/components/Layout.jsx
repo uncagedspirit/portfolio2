@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { profileData } from "../data";
 
 const SIDEBAR_WIDTH = 220;
@@ -14,7 +14,9 @@ const navItems = [
 // Smooth scroll without touching the URL
 function scrollTo(id) {
   const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (el) {
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 }
 
 // ─── Brevo email sender ───────────────────────────────────────────────────────
@@ -22,7 +24,7 @@ async function sendBrevoEmail({ name, email, message }) {
   const apiKey = import.meta.env.VITE_BREVO_API_KEY;
   if (!apiKey) {
     console.warn("VITE_BREVO_API_KEY not set — skipping actual email send.");
-    return { ok: true };           // fall through to "sent" UI in dev
+    return { ok: true };
   }
 
   const res = await fetch("https://api.brevo.com/v3/smtp/email", {
@@ -34,7 +36,7 @@ async function sendBrevoEmail({ name, email, message }) {
     body: JSON.stringify({
       sender: {
         name: "Portfolio Contact Form",
-        email: profileData.email,        // must be a verified sender in Brevo
+        email: profileData.email,
       },
       replyTo: { email, name },
       to: [{ email: profileData.email, name: `${profileData.name} ${profileData.surname}` }],
@@ -61,7 +63,7 @@ async function sendBrevoEmail({ name, email, message }) {
 // ─── Contact Modal ────────────────────────────────────────────────────────────
 function ContactModal({ onClose }) {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
-  const [status, setStatus] = useState("idle"); // idle | sending | sent | error
+  const [status, setStatus] = useState("idle");
 
   const handleSubmit = async () => {
     if (!form.name || !form.email || !form.message) return;
@@ -92,7 +94,6 @@ function ContactModal({ onClose }) {
           padding: 40, width: "100%", maxWidth: 480, position: "relative",
         }}
       >
-        {/* Close */}
         <button
           onClick={onClose}
           style={{ position: "absolute", top: 16, right: 20, background: "none", border: "none", color: "var(--muted)", fontSize: 18, cursor: "pointer" }}
@@ -179,6 +180,8 @@ export default function Layout({ children }) {
   const [active, setActive] = useState("home");
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
   const [modalOpen, setModalOpen] = useState(false);
+  const debounceTimerRef = useRef(null);
+  const previousActiveRef = useRef("home");
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -186,27 +189,63 @@ export default function Layout({ children }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Track active section without touching the URL
+  // Smooth scroll detection using a simpler, more stable approach
   useEffect(() => {
-    const sections = document.querySelectorAll("section[id]");
-    const observer = new IntersectionObserver(
-      (entries) => {
-        // Find the entry with the highest intersection ratio that is intersecting
-        let best = null;
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            if (!best || e.intersectionRatio > best.intersectionRatio) best = e;
-          }
-        });
-        if (best) setActive(best.target.id);
-      },
-      {
-        threshold: [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3],
-        rootMargin: "0px 0px -25% 0px",
+    const sections = Array.from(document.querySelectorAll("section[id]"));
+    if (sections.length === 0) return;
+
+    // Function to determine which section is in view
+    const updateActiveSection = () => {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const viewportCenter = scrollY + windowHeight / 2;
+
+      let closestSection = sections[0];
+      let closestDistance = Infinity;
+
+      sections.forEach((section) => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.offsetHeight;
+        const sectionCenter = sectionTop + sectionHeight / 2;
+        const distance = Math.abs(viewportCenter - sectionCenter);
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestSection = section;
+        }
+      });
+
+      const newActive = closestSection.id;
+      
+      // Only update if it actually changed
+      if (newActive !== previousActiveRef.current) {
+        previousActiveRef.current = newActive;
+        setActive(newActive);
       }
-    );
-    sections.forEach((s) => observer.observe(s));
-    return () => observer.disconnect();
+    };
+
+    // Debounced scroll listener - update max once per 100ms during scroll
+    const handleScroll = () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+
+      debounceTimerRef.current = setTimeout(() => {
+        updateActiveSection();
+      }, 100);
+    };
+
+    // Also update on initial load
+    updateActiveSection();
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
   }, []);
 
   return (
@@ -248,10 +287,12 @@ export default function Layout({ children }) {
                     color: isActive ? "var(--bright)" : "var(--dim)",
                     background: "none", border: "none", cursor: "pointer",
                     fontFamily: "inherit", textAlign: "left",
-                    transition: "color 0.2s",
+                    transition: "color 0.3s ease",
                   }}
+                  onMouseEnter={(e) => !isActive && (e.currentTarget.style.color = "var(--bright)")}
+                  onMouseLeave={(e) => !isActive && (e.currentTarget.style.color = "var(--dim)")}
                 >
-                  <span style={{ color: isActive ? "var(--accent)" : "var(--border)", fontSize: 10 }}>—</span>
+                  <span style={{ color: isActive ? "var(--accent)" : "var(--border)", fontSize: 10, transition: "color 0.3s ease" }}>—</span>
                   {label}
                 </button>
               );
@@ -320,8 +361,10 @@ export default function Layout({ children }) {
                   padding: "6px 8px",
                   color: isActive ? "var(--bright)" : "var(--dim)",
                   background: "none", border: "none", cursor: "pointer",
-                  fontFamily: "inherit", transition: "color 0.2s",
+                  fontFamily: "inherit", transition: "color 0.3s ease",
                 }}
+                onMouseEnter={(e) => !isActive && (e.currentTarget.style.color = "var(--bright)")}
+                onMouseLeave={(e) => !isActive && (e.currentTarget.style.color = "var(--dim)")}
               >
                 {label}
               </button>
